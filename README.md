@@ -20,14 +20,14 @@ Log into GitHub and visit the following URL.
 
 https://classroom.github.com/a/_c-n70hS
 
-This will create for you a private repository on GitHub.  Log into student2.cs.appstate.edu, get into your 4450 or 5450 directory, and use the clone command to create the repository on the student2 machine.  The only thing provided for you is a .gitignore file and the file proxy.py that contains the main.  This code references two classes, proxyClient, and cacheDir.  You can rename these classes, use more classes, write the code in a procedural way instead of object-oriented, etc.   You are required to write easy to read, well-documented code, with small single-purpose functions.
+This will create for you a private repository on GitHub. Log into cs9450.cs.appstate.edu, use the clone command to create the repository on the cs9450 VM. The only thing provided for you is a .gitignore file and the file proxy.py that contains the main. This code references two classes, proxyClient, and cacheDir. You can rename these classes, use more classes, write the code in a procedural way instead of object-oriented, etc.  You are required to write easy to read, well-documented code, with small single-purpose functions.
 
 
 III. Sample Outputs
 
-1) First access to a page.  The object will come from the server. Print a message indicating the object is coming from the server, the response header, and the response body.  Don't print response body if it is binary.
+1) First access to a page. The object will come from the server. Print a message indicating the object is coming from the server, the response header, and the response body.  Don't print response body if it is binary.
 
-student> ./proxy.py http://www.cs.appstate.edu/~can/4450/page1.html
+student> ./proxy.py http://www.cs.appstate.edu/hamzaas/9450/page1.html
 ---RETURNING OBJECT FROM SERVER---
 HTTP/1.1 200 OK
 Date: Mon, 17 Sep 2018 00:28:26 GMT
@@ -56,7 +56,7 @@ This is page one.
 
 2) Second access to a page.  The object will come from the cache. Print a message indicating it is from the cache. Notice the header is not the same as the header that came from the server.  It is a header that was built from information in the cache.
 
-student2> ./proxy.py http://www.cs.appstate.edu/~can/4450/page1.html
+cs9450> ./proxy.py http://www.cs.appstate.edu/hamzaas/9450/page1.html
 ---RETURNING OBJECT FROM CACHE---
 HTTP/1.1 200 OK
 Connection: close
@@ -81,7 +81,7 @@ This is page one.
 
 3) An access to an image file will only cause the header to be displayed.
 
-student2> ./proxy.py http://www.cs.appstate.edu/~can/4450/picture1.png
+cs9450> ./proxy.py http://www.cs.appstate.edu/hamzaas/9450/picture1.png
 ---RETURNING OBJECT FROM SERVER---
 HTTP/1.1 200 OK
 Date: Mon, 17 Sep 2018 00:33:11 GMT
@@ -97,7 +97,7 @@ Content is binary
 
 4) If the url is invalid, the http response status code will not be 200.  Don't cache the object, but still display the header and the body.
 
-student2> ./proxy.py http://www.cs.appstate.edu/~can/4450/badfile.html
+cs9450> ./proxy.py http://www.cs.appstate.edu/hamzaas/9450/badfile.html
 ---RETURNING OBJECT FROM SERVER---
 HTTP/1.1 404 Not Found
 Date: Mon, 17 Sep 2018 00:35:40 GMT
@@ -112,23 +112,23 @@ Content-Type: text/html; charset=iso-8859-1
 <title>404 Not Found</title>
 </head><body>
 <h1>Not Found</h1>
-<p>The requested URL /~can/4450/badfile.html was not found on this server.</p>
+<p>The requested URL /hamzaas/9450/badfile.html was not found on this server.</p>
 </body></html>
 
 IV. Cache
 The cache consists of two components.  A directory file will be used to connect each object to the file used to store the object.  In addition, the directory can be used to hold the most important header lines.  For example, after the accesses made in Part II, the directory might contain this:
 
-student2> more cacheDir.txt
-www.cs.appstate.edu/~can/4450/page1.html|Last-Modified: Mon, 17 Sep 2018 00:20:35 GMT|Content-Length: 106|Content-Type:
+cs9450> more cacheDir.txt
+www.cs.appstate.edu/hamzaas/9450/page1.html|Last-Modified: Mon, 17 Sep 2018 00:20:35 GMT|Content-Length: 106|Content-Type:
 text/html|1
-www.cs.appstate.edu/~can/4450/picture1.png|Last-Modified: Mon, 17 Sep 2018 00:17:11 GMT|Content-Length: 154435|Content-T
+www.cs.appstate.edu/hamzaas/9450/picture1.png|Last-Modified: Mon, 17 Sep 2018 00:17:11 GMT|Content-Length: 154435|Content-T
 ype: image/png|2
 
 Each line represents a single object.  The fields of a line are separated by the | character.  The last field (1 and 2) is the name of the file containing the object. Thus, the directory containing the code also contains the files: cacheDir.txt, 1, and 2.  If another, different object is accessed, the cacheDir.txt file will be modified and the file 3 will be created.
 
 In addition, the proxy program should also accept a clean option instead of a URL.  The clean option will cause the cache directory and files to be deleted.
 
-student2> proxy.py clean
+cs9450> proxy.py clean
 Cleaning
 Removing 1
 Removing 2
@@ -145,7 +145,7 @@ You can come up with your design.
 The most important tasks to be performed are the following:
 
 1. Contacting the origin server. 
-You'll need to parse the URL to grab the host. For example, the host within http://www.cs.appstate.edu/~can/4450/picture1.png is www.cs.appstate.edu.  The host and port 80 will be passed to the call to connect. The HTTP request will need to contain a GET with the input URL, a Host: header, and a Connection: close header.  You will need to encode the header using 'utf-8' before sending it the server, for example:
+You'll need to parse the URL to grab the host. For example, the host within http://www.cs.appstate.edu/hamzaas/9450/picture1.png is www.cs.appstate.edu.  The host and port 80 will be passed to the call to connect. The HTTP request will need to contain a GET with the input URL, a Host: header, and a Connection: close header.  You will need to encode the header using 'utf-8' before sending it the server, for example:
 clientSocket.send(request.encode('utf-8'))
 Since the length of the response is unknown, you'll need to read it in a loop, for example:
 responseAll = bytearray();
@@ -163,17 +163,17 @@ When the program starts, read the cache directory into a list structure.  Then i
 VI. Final Notes
 You can test your code on the following:
 
-http://www.cs.appstate.edu/~can/4450/page1.html
+http://www.cs.appstate.edu/hamzaas/9450/page1.html
 
-http://www.cs.appstate.edu/~can/4450/page2.html
+http://www.cs.appstate.edu/hamzaas/9450/page2.html
 
-http://www.cs.appstate.edu/~can/4450/page3.html
+http://www.cs.appstate.edu/hamzaas/9450/page3.html
 
-http://www.cs.appstate.edu/~can/4450/picture1.png
+http://www.cs.appstate.edu/hamzaas/9450/picture1.png
 
-http://www.cs.appstate.edu/~can/4450/picture2.jpg
+http://www.cs.appstate.edu/hamzaas/9450/picture2.jpg
 
-http://www.cs.appstate.edu/~can/4450/picture3.jpg
+http://www.cs.appstate.edu/hamzaas/9450/picture3.jpg
 
 You don't need to handle any content types other than: text/html, image/png, and image/jpeg.
 
